@@ -48,4 +48,39 @@ if st.button("Predict"):
     plt.title("Prediction Confidence")
     st.pyplot(fig)
 
+
+
 # Add visualizations/explanation as needed
+# ===================================================|Viz - 1|================+====================================
+st.subheader("Top Influential Features")
+
+# Get feature importance
+importance = pd.Series(model.feature_importances_, index=features)
+importance = importance.sort_values(ascending=True).tail(5)  # Top 5 only
+
+# Create figure explicitly
+fig, ax = plt.subplots(figsize=(8,4))
+sns.barplot(x=importance.values, y=importance.index, palette="Blues_d", ax=ax)
+ax.set_title("Which features matter most?")
+ax.set_xlabel("Importance Score")
+
+# Explicitly pass figure to st.pyplot()
+st.pyplot(fig)
+
+# ==================================================|Viz - 2|=======================================================
+st.subheader("Prediction Confidence")
+
+if 'prediction' in locals():
+    max_prob = round(proba.max()*100)
+    
+    # Create figure explicitly
+    fig, ax = plt.subplots(figsize=(6,2))
+    ax.barh(0, max_prob, color=plt.cm.Blues(0.6))
+    ax.set_xlim(0, 100)
+    ax.text(max_prob/2, 0, f"{max_prob}%", 
+            ha='center', va='center', color='white', fontsize=12)
+    ax.axis('off')
+    ax.set_title(f"Model Confidence in '{prediction}' Prediction")
+    
+    # Explicitly pass figure
+    st.pyplot(fig)
